@@ -18,7 +18,7 @@ pub fn build(b: *std.Build) !void {
     while (try it.next()) |file| {
         const f: []const u8 = file.name;
         if (std.mem.endsWith(u8, f, ".c")) {
-            glfwLib.addCSourceFile(try std.mem.concat(b.allocator, u8, &[2][]const u8{src/, f}) , &[_][]const u8{"-D_GLFW_X11"});
+            glfwLib.addCSourceFile(try std.mem.concat(b.allocator, u8, &[2][]const u8{"src/", f}) , &[_][]const u8{"-D_GLFW_X11"});
         }
     }
 
