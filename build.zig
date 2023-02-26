@@ -27,7 +27,7 @@ pub fn build(b: *std.Build) !void {
     lib.install();
     lib.installHeadersDirectory(sdkPath("/include/GLFW"), "GLFW");
     lib.addIncludePath(sdkPath("/include"));
-    lib.installHeader(sdkPath("include/GLFW/glfw3.h"), "GLFW/glfw3.h");
+    lib.installHeader(sdkPath("/include/GLFW/glfw3.h"), "GLFW/glfw3.h");
     // const exe = b.addExecutable(.{
     //     .name = "glfw-test",
     //     .root_source_file = .{ .path = "src/exemple.zig" },
