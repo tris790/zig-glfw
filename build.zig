@@ -19,7 +19,6 @@ pub fn build(b: *std.Build) !void {
         const fileName: []const u8 = file.name;
         if (std.mem.endsWith(u8, fileName, ".c")) {
             var filePath = try std.mem.concat(b.allocator, u8, &.{ sdkPath("/src/"), fileName });
-            // std.log.info("TD: {s}\n", .{filePath});
             lib.addCSourceFile(filePath, &.{"-D_GLFW_X11"});
         }
     }
@@ -28,36 +27,28 @@ pub fn build(b: *std.Build) !void {
     lib.installHeadersDirectory(sdkPath("/include/GLFW"), "GLFW");
     lib.addIncludePath(sdkPath("/include"));
     lib.installHeader(sdkPath("/include/GLFW/glfw3.h"), "GLFW/glfw3.h");
-    // const exe = b.addExecutable(.{
-    //     .name = "glfw-test",
-    //     .root_source_file = .{ .path = "src/exemple.zig" },
-    //     .target = target,
-    //     .optimize = optimize,
-    // });
 
-    // exe.addIncludePath("include");
-    // exe.linkSystemLibrary("GL");
-    // exe.linkLibrary(lib);
-    // exe.linkLibC();
-    // exe.install();
+    const exe = b.addExecutable(.{
+        .name = "glfw-test",
+        .root_source_file = .{ .path = "src/exemple.zig" },
+        .target = target,
+        .optimize = optimize,
+    });
 
-    // const run_cmd = exe.run();
-    // run_cmd.step.dependOn(b.getInstallStep());
-    // if (b.args) |args| {
-    //     run_cmd.addArgs(args);
-    // }
+    exe.addIncludePath(sdkPath("/include"));
+    exe.linkSystemLibrary("GL");
+    exe.linkLibrary(lib);
+    exe.linkLibC();
+    exe.install();
 
-    // const run_step = b.step("run", "Run the app");
-    // run_step.dependOn(&run_cmd.step);
+    const run_cmd = exe.run();
+    run_cmd.step.dependOn(b.getInstallStep());
+    if (b.args) |args| {
+        run_cmd.addArgs(args);
+    }
 
-    // const main_tests = b.addTest(.{
-    //     .root_source_file = .{ .path = "src/main.zig" },
-    //     .target = target,
-    //     .optimize = optimize,
-    // });
-
-    // const test_step = b.step("test", "Run library tests");
-    // test_step.dependOn(&main_tests.step);
+    const run_step = b.step("run", "Run the app");
+    run_step.dependOn(&run_cmd.step);
 }
 
 fn sdkPath(comptime suffix: []const u8) []const u8 {
