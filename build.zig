@@ -16,9 +16,9 @@ pub fn build(b: *std.Build) !void {
     var dir = try std.fs.cwd().openIterableDir("src", .{});
     var it = dir.iterate();
     while (try it.next()) |file| {
-        const f: []const u8 = file.name;
-        if (std.mem.endsWith(u8, f, ".c")) {
-            var filePath = try std.mem.concat(b.allocator, u8, &.{ "src/", f });
+        const fileName: []const u8 = file.name;
+        if (std.mem.endsWith(u8, fileName, ".c")) {
+            var filePath = try std.mem.concat(b.allocator, u8, &.{ sdkPath("/src/"), fileName });
             // std.log.info("TD: {s}\n", .{filePath});
             lib.addCSourceFile(filePath, &.{"-D_GLFW_X11"});
         }
@@ -58,4 +58,12 @@ pub fn build(b: *std.Build) !void {
 
     // const test_step = b.step("test", "Run library tests");
     // test_step.dependOn(&main_tests.step);
+}
+
+fn sdkPath(comptime suffix: []const u8) []const u8 {
+    if (suffix[0] != '/') @compileError("suffix must be an absolute path");
+    return comptime blk: {
+        const root_dir = std.fs.path.dirname(@src().file) orelse ".";
+        break :blk root_dir ++ suffix;
+    };
 }
