@@ -4,26 +4,30 @@ pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
-    const glfwLib = b.addStaticLibrary(.{
+    const lib = b.addStaticLibrary(.{
         .name = "glfw",
         .target = target,
         .optimize = optimize,
     });
 
-    glfwLib.linkSystemLibrary("pthread");
-    glfwLib.addIncludePath("src");
-    var src = try std.fs.cwd().openDir("src", .{});
-    var dir = try src.openIterableDir(".", .{});
+    lib.linkLibC();
+    lib.linkSystemLibrary("pthread");
+    lib.addIncludePath("src");
+    var dir = try std.fs.cwd().openIterableDir("src", .{});
     var it = dir.iterate();
     while (try it.next()) |file| {
         const f: []const u8 = file.name;
         if (std.mem.endsWith(u8, f, ".c")) {
-            glfwLib.addCSourceFile(try std.mem.concat(b.allocator, u8, &[2][]const u8{"src/", f}) , &[_][]const u8{"-D_GLFW_X11"});
+            var filePath = try std.mem.concat(b.allocator, u8, &.{ "src/", f });
+            // std.log.info("TD: {s}\n", .{filePath});
+            lib.addCSourceFile(filePath, &.{"-D_GLFW_X11"});
         }
     }
 
-    glfwLib.install();
-    glfwLib.installHeadersDirectory("include", "glfw");
+    lib.install();
+    lib.installHeadersDirectory("include/GLFW", "GLFW");
+    lib.addIncludePath("include");
+    lib.installHeader("include/GLFW/glfw3.h", "GLFW/glfw3.h");
     // const exe = b.addExecutable(.{
     //     .name = "glfw-test",
     //     .root_source_file = .{ .path = "src/exemple.zig" },
@@ -33,7 +37,7 @@ pub fn build(b: *std.Build) !void {
 
     // exe.addIncludePath("include");
     // exe.linkSystemLibrary("GL");
-    // exe.linkLibrary(glfwLib);
+    // exe.linkLibrary(lib);
     // exe.linkLibC();
     // exe.install();
 
