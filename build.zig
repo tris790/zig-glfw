@@ -23,6 +23,7 @@ pub fn build(b: *std.Build) !void {
         }
     }
 
+    lib.defineCMacro("GLFW_INCLUDE_VULKAN");
     lib.install();
     lib.installHeadersDirectory(sdkPath("/include/GLFW"), "GLFW");
     lib.addIncludePath(sdkPath("/include"));
