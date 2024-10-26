@@ -29,27 +29,27 @@ pub fn build(b: *std.Build) !void {
     lib.installHeader(b.path("include/GLFW/glfw3.h"), "GLFW/glfw3.h");
     b.installArtifact(lib);
 
-    // const exe = b.addExecutable(.{
-    //     .name = "glfw-test",
-    //     .root_source_file = b.path("src/example.zig"),
-    //     .target = target,
-    //     .optimize = optimize,
-    // });
+    const exe = b.addExecutable(.{
+        .name = "glfw-test",
+        .root_source_file = b.path("src/example.zig"),
+        .target = target,
+        .optimize = optimize,
+    });
 
-    // exe.addIncludePath(b.path("include"));
-    // exe.linkSystemLibrary("GL");
-    // exe.linkLibrary(lib);
-    // exe.linkLibC();
-    // b.installArtifact(exe);
+    exe.addIncludePath(b.path("include"));
+    exe.linkSystemLibrary("GL");
+    exe.linkLibrary(lib);
+    exe.linkLibC();
+    b.installArtifact(exe);
 
-    // const run_cmd = b.addRunArtifact(exe);
+    const run_cmd = b.addRunArtifact(exe);
 
-    // run_cmd.step.dependOn(b.getInstallStep());
+    run_cmd.step.dependOn(b.getInstallStep());
 
-    // if (b.args) |args| {
-    //     run_cmd.addArgs(args);
-    // }
+    if (b.args) |args| {
+        run_cmd.addArgs(args);
+    }
 
-    // const run_step = b.step("run", "Run the app");
-    // run_step.dependOn(&run_cmd.step);
+    const run_step = b.step("run", "Run the app");
+    run_step.dependOn(&run_cmd.step);
 }
