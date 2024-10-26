@@ -6,7 +6,7 @@ pub fn main() !void {
     if (c.glfwInit() == 0)
         return error.FailedInit;
 
-    var window = c.glfwCreateWindow(640, 480, "My Window", null, null);
+    const window = c.glfwCreateWindow(640, 480, "My Window", null, null);
     if (false and window == null) {
         c.glfwTerminate();
         return error.FailedCreateWindow;

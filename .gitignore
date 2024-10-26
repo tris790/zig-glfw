@@ -102,4 +102,5 @@ tests/window
 tests/windows
 
 zig-cache
+.zig-cache
 zig-out
